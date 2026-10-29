@@ -1,0 +1,11 @@
+INVOICE No. INV-2041
+Date: 12th Oct 2025
+Vendor: Mapusa Electronics
+Billed to: Rahul Naik
+
+1 x Laptop charger  @ 1500.00 = 1500.00
+2 x USB cable       @ 250.00  = 500.00
+
+Subtotal: 2000.00
+GST 18%: 360.00
+Total: INR 2360.00
