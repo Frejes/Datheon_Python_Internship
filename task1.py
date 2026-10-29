@@ -1,16 +1,4 @@
-"""
-Structured LLM Prompt Pipeline & JSON Extractor
-------------------------------------------------
-Turns unstructured text (invoices, resumes) into validated JSON using OpenRouter + Pydantic.
 
-Setup:
-    pip install requests pydantic
-    Set OPENROUTER_API_KEY and OPENROUTER_MODEL in your environment.
-
-Usage:
-    python task1.py invoice sample_invoice.txt
-    python task1.py resume  sample_resume.txt
-"""
 import argparse
 import json
 import os
@@ -30,7 +18,6 @@ REQUEST_TIMEOUT_SECONDS = 90
 RETRYABLE_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 
 
-# ---------------------------------------------------------------- 1. Schemas
 class LineItem(BaseModel):
     description: str
     quantity: float = Field(ge=0)
@@ -80,7 +67,6 @@ class Resume(BaseModel):
     education: list[str]
 
 
-# ------------------------------------------------- 2. Parameterized templates
 PROMPTS = {
     "invoice": {
         "schema": Invoice,
@@ -154,7 +140,6 @@ def build_prompt(kind: str, document: str, error_feedback: str = "") -> str:
     return prompt
 
 
-# ---------------------------------------------------- 3. Call OpenRouter API
 def call_openrouter(system: str, prompt: str, schema: type[BaseModel]) -> str:
     api_key = os.getenv("OPENROUTER_API_KEY")
     model = os.getenv("OPENROUTER_MODEL")
@@ -218,7 +203,6 @@ def _http_error_detail(response: Optional[requests.Response]) -> str:
     return response.text[:500] or "No error details were provided."
 
 
-# ------------------------------------------------ 4. Call LLM + validate JSON
 def extract(kind: str, document: str) -> BaseModel:
     cfg = PROMPTS[kind]
     schema = cfg["schema"]
@@ -308,7 +292,6 @@ def extract(kind: str, document: str) -> BaseModel:
     raise RuntimeError(f"Could not get valid output after {MAX_RETRIES} attempts:\n{feedback}")
 
 
-# --------------------------------------------------------------------- CLI
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("kind", choices=PROMPTS.keys())
