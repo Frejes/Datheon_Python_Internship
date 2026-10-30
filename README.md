@@ -3,7 +3,7 @@
 
 A Python script that turns unstructured text documents (invoices and resumes) into **strictly validated JSON** using an LLM API.
 
-## How it works
+**How it works**
 
 1. **Schemas (Pydantic):** `Invoice` and `Resume` models define exactly what valid output looks like. The invoice model also checks that `subtotal + tax == total`.
 2. **Parameterized prompt templates:** each document type has a system instruction, a few-shot example, and a template that inserts the raw document text. Adding a new document type only requires a new entry in the `PROMPTS` dict.
@@ -11,7 +11,7 @@ A Python script that turns unstructured text documents (invoices and resumes) in
 4. **Validation and retry loop:** the reply is parsed with Pydantic. If validation fails, the error is fed back to the model and it retries (up to 3 times).
 5. **Resilience:** HTTP 429/5xx errors and network timeouts are retried with increasing delays.
 
-## Setup
+**Setup**
 
 ```bash
 python -m venv venv
@@ -37,7 +37,7 @@ export OPENROUTER_MODEL="recursive/flint-v1.0:free"
 
 `OPENROUTER_MODEL` is optional. Any chat model ID from [openrouter.ai/models](https://openrouter.ai/models) works.
 
-## Usage
+**Usage**
 
 ```bash
 python task1.py invoice sample_invoice.txt
@@ -50,7 +50,7 @@ Save the output to a file:
 python task1.py invoice sample_invoice.txt > output_invoice.json
 ```
 
-## Example
+**Example**
 
 Input (`sample_invoice.txt`):
 
@@ -97,7 +97,7 @@ Output:
 }
 ```
 
-## Project structure
+**Project structure**
 
 ```
 task1.py            # extractor script
