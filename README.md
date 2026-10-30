@@ -106,7 +106,7 @@ sample_invoice.txt  # example input
 README.md
 ```
 
-## Troubleshooting
+**Troubleshooting**
 
 | Error | Likely cause |
 |---|---|
@@ -117,7 +117,7 @@ README.md
 | `429` / `503` | Model is busy or rate-limited; the script retries automatically, or try another model |
 | Validation failed after 3 attempts | The model is not following the schema well; try a different model |
 
-## Tech stack
+**Tech stack**
 
 Python 3, Pydantic, Requests, OpenRouter API.
 
