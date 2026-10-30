@@ -1,4 +1,4 @@
-**Task 1**
+# Task-1
 # Structured LLM Prompt Pipeline & JSON Extractor
 
 A Python script that turns unstructured text documents (invoices and resumes) into **strictly validated JSON** using an LLM API.
@@ -120,3 +120,5 @@ README.md
 ## Tech stack
 
 Python 3, Pydantic, Requests, OpenRouter API.
+
+# Task-2
