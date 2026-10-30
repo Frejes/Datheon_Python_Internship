@@ -106,17 +106,6 @@ sample_invoice.txt  # example input
 README.md
 ```
 
-**Troubleshooting**
-
-| Error | Likely cause |
-|---|---|
-| `KeyError: 'OPENROUTER_API_KEY'` | Key not set in the current terminal window |
-| `401` | Wrong or mistyped API key |
-| `402` | Model needs credits; use a `:free` model or add credit |
-| `404` / "No endpoints found" | Model ID is wrong or the model was removed |
-| `429` / `503` | Model is busy or rate-limited; the script retries automatically, or try another model |
-| Validation failed after 3 attempts | The model is not following the schema well; try a different model |
-
 **Tech stack**
 
 Python 3, Pydantic, Requests, OpenRouter API.
