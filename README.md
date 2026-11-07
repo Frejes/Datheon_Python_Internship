@@ -112,7 +112,7 @@ Python 3, Pydantic, Requests, OpenRouter API.
 
 # Task-2
 
-# Task 2: Document Q&A Assistant with RAG & Vector Embeddings
+# Document Q&A Assistant with RAG & Vector Embeddings
 
 A Retrieval-Augmented Generation (RAG) system that answers questions **strictly from your own PDF/text documents** and cites the source page for every answer.
 
@@ -128,17 +128,6 @@ A Retrieval-Augmented Generation (RAG) system that answers questions **strictly 
 ## Tech Stack
 Python 3, LangChain, ChromaDB, HuggingFace Sentence Transformers, OpenRouter (LLM)
 
-## Project Structure
-```
-task2/
-├── task2.py            # RAG pipeline
-├── requirements.txt    # dependencies
-├── README.md
-├── docs/               # put your PDFs here
-│   └── novabyte_handbook.pdf   # sample document
-└── chroma_db/          # auto-created vector store
-```
-
 ## How It Works
 1. **Load**: `PyPDFLoader` reads each PDF page as a document.
 2. **Chunk**: `RecursiveCharacterTextSplitter` splits text into 1000-character chunks with 200 overlap, keeping page metadata.
@@ -150,16 +139,12 @@ task2/
 
 ## Setup
 
-**1. Install dependencies**
 ```bash
 python -m venv venv
 venv\Scripts\activate        # Windows
 # source venv/bin/activate   # Mac/Linux
 pip install -r requirements.txt
-```
 
-**2. Set your API key** (free key from [openrouter.ai](https://openrouter.ai))
-```bash
 # Windows PowerShell
 $env:OPENROUTER_API_KEY="your_key_here"
 
@@ -200,10 +185,8 @@ I couldn't find that in the provided documents.
 | Question | Expected answer | Page |
 |---|---|---|
 | How many days of paid annual leave do employees get? | 24 days | 3 |
-| What is the daily meal allowance in Switzerland? | CHF 40 | 4 |
 | How long must passwords be? | At least 14 characters | 5 |
 | How much is the annual learning budget? | Rs 40,000 | 6 |
-| Who is the CEO? | Meera Kamat | 2 |
 
 ## Configuration
 | Setting | Location | Default |
@@ -214,13 +197,4 @@ I couldn't find that in the provided documents.
 | Vector store folder | `PERSIST_DIR` | ./chroma_db |
 | LLM | `get_llm()` | recursive/flint-v1.0:free (OpenRouter) |
 
-## Troubleshooting
-- **`No module named ...`**: activate the virtual environment and rerun `pip install -r requirements.txt`.
-- **API key error**: set `OPENROUTER_API_KEY` in the same terminal window you run the script from.
-- **Old answers after changing PDFs**: run once with `--rebuild`.
-- **Slow first run**: the embedding model is downloaded and documents are indexed once; later runs are fast.
 
-## Notes
-- The sample handbook is fictional and included only for testing.
-- Do not commit your API key. Keep it in an environment variable.
-- Add `chroma_db/` and `venv/` to `.gitignore` if using Git.
