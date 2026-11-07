@@ -21,8 +21,6 @@ venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 ```
 
-Create an API key at [openrouter.ai](https://openrouter.ai) and set it as an environment variable. 
-
 Windows PowerShell:
 ```powershell
 $env:OPENROUTER_API_KEY="YOUR_KEY"
@@ -32,22 +30,7 @@ $env:OPENROUTER_MODEL="recursive/flint-v1.0:free"
 Mac/Linux:
 ```bash
 export OPENROUTER_API_KEY="YOUR_KEY"
-export OPENROUTER_MODEL="recursive/flint-v1.0:free"
-```
-
-`OPENROUTER_MODEL` is optional. Any chat model ID from [openrouter.ai/models](https://openrouter.ai/models) works.
-
-**Usage**
-
-```bash
-python task1.py invoice sample_invoice.txt
-python task1.py resume  sample_resume.txt
-```
-
-Save the output to a file:
-
-```bash
-python task1.py invoice sample_invoice.txt > output_invoice.json
+export OPENROUTER_MODEL=""
 ```
 
 **Example**
