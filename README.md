@@ -24,7 +24,7 @@ pip install -r requirements.txt
 Windows PowerShell:
 ```powershell
 $env:OPENROUTER_API_KEY="YOUR_KEY"
-$env:OPENROUTER_MODEL="recursive/flint-v1.0:free"
+$env:OPENROUTER_MODEL=""
 ```
 
 Mac/Linux:
