@@ -111,3 +111,116 @@ README.md
 Python 3, Pydantic, Requests, OpenRouter API.
 
 # Task-2
+
+# Task 2: Document Q&A Assistant with RAG & Vector Embeddings
+
+A Retrieval-Augmented Generation (RAG) system that answers questions **strictly from your own PDF/text documents** and cites the source page for every answer.
+
+## Features
+- Loads PDF and text documents (`.pdf`, `.txt`, `.md`)
+- Recursive text chunking with overlap
+- Vector embeddings using a free local model (`all-MiniLM-L6-v2`)
+- ChromaDB vector store, persisted locally (no database server needed)
+- `RetrievalQA` chain with a prompt that forbids outside knowledge
+- Source citations with file name and page number
+- Refuses to answer when the information isn't in the documents
+
+## Tech Stack
+Python 3, LangChain, ChromaDB, HuggingFace Sentence Transformers, OpenRouter (LLM)
+
+## Project Structure
+```
+task2/
+├── task2.py            # RAG pipeline
+├── requirements.txt    # dependencies
+├── README.md
+├── docs/               # put your PDFs here
+│   └── novabyte_handbook.pdf   # sample document
+└── chroma_db/          # auto-created vector store
+```
+
+## How It Works
+1. **Load**: `PyPDFLoader` reads each PDF page as a document.
+2. **Chunk**: `RecursiveCharacterTextSplitter` splits text into 1000-character chunks with 200 overlap, keeping page metadata.
+3. **Embed**: each chunk is converted into a vector by `all-MiniLM-L6-v2`.
+4. **Store**: vectors are saved in ChromaDB (`./chroma_db`).
+5. **Retrieve**: the question is embedded and the most similar chunks are fetched.
+6. **Answer**: the LLM answers using only the retrieved context.
+7. **Cite**: the source file and page number are printed with the answer.
+
+## Setup
+
+**1. Install dependencies**
+```bash
+python -m venv venv
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # Mac/Linux
+pip install -r requirements.txt
+```
+
+**2. Set your API key** (free key from [openrouter.ai](https://openrouter.ai))
+```bash
+# Windows PowerShell
+$env:OPENROUTER_API_KEY="your_key_here"
+
+# Mac/Linux
+export OPENROUTER_API_KEY=your_key_here
+```
+
+**3. Add documents** to the `docs/` folder.
+
+## Usage
+```bash
+# Ask a single question
+python task2.py --docs ./docs --ask "How many days of paid annual leave do employees get?"
+
+# Interactive mode (type exit to quit)
+python task2.py --docs ./docs
+
+# Re-index after adding or changing documents
+python task2.py --docs ./docs --rebuild
+```
+
+## Example Output
+```
+Answer:
+24 days of paid annual leave per calendar year.
+
+Sources:
+  - novabyte_handbook.pdf, page 3
+```
+
+Out-of-scope question:
+```
+Answer:
+I couldn't find that in the provided documents.
+```
+
+## Sample Questions (for the included handbook)
+| Question | Expected answer | Page |
+|---|---|---|
+| How many days of paid annual leave do employees get? | 24 days | 3 |
+| What is the daily meal allowance in Switzerland? | CHF 40 | 4 |
+| How long must passwords be? | At least 14 characters | 5 |
+| How much is the annual learning budget? | Rs 40,000 | 6 |
+| Who is the CEO? | Meera Kamat | 2 |
+
+## Configuration
+| Setting | Location | Default |
+|---|---|---|
+| Chunk size / overlap | `chunk_documents()` | 1000 / 200 |
+| Chunks retrieved | `build_qa_chain()` (`k`) | 4 |
+| Embedding model | `EMBED_MODEL` | all-MiniLM-L6-v2 |
+| Vector store folder | `PERSIST_DIR` | ./chroma_db |
+| LLM | `get_llm()` | recursive/flint-v1.0:free (OpenRouter) |
+
+## Troubleshooting
+- **`No module named ...`**: activate the virtual environment and rerun `pip install -r requirements.txt`.
+- **API key error**: set `OPENROUTER_API_KEY` in the same terminal window you run the script from.
+- **Old answers after changing PDFs**: run once with `--rebuild`.
+- **Slow first run**: the embedding model is downloaded and documents are indexed once; later runs are fast.
+
+## Notes
+- The sample handbook is fictional and included only for testing.
+- Do not commit your API key. Keep it in an environment variable.
+- Add `chroma_db/` and `venv/` to `.gitignore` if using Git.
