@@ -172,3 +172,131 @@ I couldn't find that in the provided documents.
 | How much is the annual learning budget? | Rs 40,000 | 6 |
 
 # Task-3
+
+# Multi-Tool Autonomous AI Agent
+
+A console AI agent built with LangChain that chooses and uses tools on its own to solve multi-step research questions. Every step of its reasoning is printed as **Thought → Action → Observation → Final Answer**.
+
+## Features
+
+| Tool | What it does |
+|------|--------------|
+| `web_search` | Real-time web search through DuckDuckGo (no API key needed) |
+| `calculator` | Safe math evaluator built on Python's `ast` module (no `eval()`) |
+| `read_local_file` | Reads text files from the `workspace/` folder only |
+
+- Works with OpenRouter, Anthropic or OpenAI models (selected by whichever API key is set).
+- The agent loop is written by hand, so each reasoning step is visible in the console.
+- Safety limits: sandboxed file access, a calculator that rejects arbitrary code, and a maximum step count.
+
+## How it works
+
+```
+You ask a question
+        |
+        v
+  LLM decides  --->  Thought: what do I need next?
+        |
+        v
+  Action: calls a tool (search / calculator / file reader)
+        |
+        v
+  Observation: tool result is sent back to the LLM
+        |
+        v
+  Repeat until the LLM has enough information
+        |
+        v
+  Final Answer
+```
+
+The tools are registered with `llm.bind_tools(...)`. On each iteration the model either requests a tool call or returns a final answer. Tool results are added to the conversation as `ToolMessage`s, and the loop stops when the model asks for no more tools or `MAX_STEPS` is reached.
+
+Python packages (`requirements.txt`):
+
+```text
+langchain-core
+langchain-openai
+ddgs
+langchain-community
+langchain-anthropic
+```
+
+`langchain-community` is only needed if you use `DuckDuckGoSearchRun`. `langchain-anthropic` is only needed for an Anthropic key.
+
+## Setup
+
+**1. Create and activate a virtual environment**
+
+Windows (PowerShell):
+```powershell
+python -m venv venv
+venv\Scripts\Activate.ps1
+```
+
+macOS / Linux:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**2. Install dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+**3. Set your API key** (set only one provider; the script checks them in this order)
+
+Windows (PowerShell):
+```powershell
+$env:OPENROUTER_API_KEY="your-key-here"
+```
+
+Windows (Command Prompt):
+```cmd
+set OPENROUTER_API_KEY=your-key-here
+```
+
+macOS / Linux:
+```bash
+export OPENROUTER_API_KEY=your-key-here
+```
+
+The variable only lasts for the current terminal window. To use a different model, set `AGENT_MODEL` to the model name.
+
+### Example questions
+
+```text
+What is 15% of 2480, and what is the square root of that number?
+```
+```text
+Who won the most recent Formula 1 race, and how many points does the leader have?
+```
+```text
+Read sales.csv, add up the amounts, then search for the current USD to INR rate and convert the total.
+```
+
+### Example output
+
+```text
+You > What is 15% of 2480, and what is the square root of that number?
+[Step 1] THOUGHT: I need to compute 15% of 2480 first.
+[Step 1] ACTION: calculator({'expression': '(15 * 2480) / 100'})
+[Step 1] OBSERVATION: 372.0
+[Step 2] THOUGHT: Now I need the square root of 372.
+[Step 2] ACTION: calculator({'expression': 'sqrt(372)'})
+[Step 2] OBSERVATION: 19.28730152198591
+
+[FINAL ANSWER]
+15% of 2480 is 372, and its square root is about 19.2873.
+```
+
+Some models skip the "Thought" sentence. If yours does, the THOUGHT line may be missing or show a generic placeholder.
+
+## Security notes
+
+- The calculator parses expressions into a syntax tree and only allows numbers, basic operators and a short list of math functions.
+- The file reader refuses any path outside `workspace/`.
+- Web search results are untrusted text. A page could contain instructions aimed at the model, so don't give this agent tools that can change or delete things without adding checks.
+- Never commit API keys to Git. Use environment variables.
+
