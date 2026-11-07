@@ -1,9 +1,9 @@
 # Task-1
-# Structured LLM Prompt Pipeline & JSON Extractor
+**Structured LLM Prompt Pipeline & JSON Extractor**
 
 A Python script that turns unstructured text documents (invoices and resumes) into **strictly validated JSON** using an LLM API.
 
-*How it works*
+**How it works**
 
 1. **Schemas (Pydantic):** `Invoice` and `Resume` models define exactly what valid output looks like. The invoice model also checks that `subtotal + tax == total`.
 2. **Parameterized prompt templates:** each document type has a system instruction, a few-shot example, and a template that inserts the raw document text. Adding a new document type only requires a new entry in the `PROMPTS` dict.
