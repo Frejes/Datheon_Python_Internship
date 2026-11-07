@@ -171,13 +171,4 @@ I couldn't find that in the provided documents.
 | How long must passwords be? | At least 14 characters | 5 |
 | How much is the annual learning budget? | Rs 40,000 | 6 |
 
-## Configuration
-| Setting | Location | Default |
-|---|---|---|
-| Chunk size / overlap | `chunk_documents()` | 1000 / 200 |
-| Chunks retrieved | `build_qa_chain()` (`k`) | 4 |
-| Embedding model | `EMBED_MODEL` | all-MiniLM-L6-v2 |
-| Vector store folder | `PERSIST_DIR` | ./chroma_db |
-| LLM | `get_llm()` | recursive/flint-v1.0:free (OpenRouter) |
-
-
+# Task-3
