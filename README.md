@@ -300,3 +300,4 @@ Some models skip the "Thought" sentence. If yours does, the THOUGHT line may be 
 - Web search results are untrusted text. A page could contain instructions aimed at the model, so don't give this agent tools that can change or delete things without adding checks.
 - Never commit API keys to Git. Use environment variables.
 
+# Task-4
