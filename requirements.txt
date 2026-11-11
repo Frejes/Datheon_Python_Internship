@@ -12,3 +12,4 @@ chromadb
 pypdf
 streamlit
 langchain-core
+langchain-anthropic
