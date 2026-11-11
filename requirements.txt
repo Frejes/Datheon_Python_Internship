@@ -10,3 +10,4 @@ langchain-openai
 sentence-transformers
 chromadb
 pypdf
+streamlit
