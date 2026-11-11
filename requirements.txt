@@ -13,3 +13,4 @@ pypdf
 streamlit
 langchain-core
 langchain-anthropic
+pypdf
