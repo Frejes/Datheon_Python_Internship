@@ -430,9 +430,3 @@ User message
 | Free model errors or rate limits | OpenRouter free models can be busy or unavailable. Retry later or change the model name in the sidebar. |
 | "I couldn't find that in the provided documents." | The answer is not in the indexed files, or `k` is too low. Increase **Chunks retrieved (k)**. |
 | Anthropic key rejected | Anthropic API keys need credit from console.anthropic.com. A Claude.ai subscription does not include API access. |
-
-## Limitations
-
-- Retrieval quality depends on chunking and the embedding model from Task 2.
-- Free hosted models may be slower or less reliable than paid ones.
-- Chat history lives only in the browser session. Refreshing the page clears it.
