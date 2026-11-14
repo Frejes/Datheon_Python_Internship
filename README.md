@@ -328,26 +328,6 @@ A web-based chat application that wraps a RAG (Retrieval-Augmented Generation) p
 | LLM | OpenRouter / Anthropic / OpenAI |
 | Language | Python 3 |
 
-## Project Structure
-
-```
-task2/
-├── app.py              # Streamlit chatbot (this task)
-├── task2.py            # RAG pipeline from Task 2 (imported by app.py)
-├── requirements.txt
-├── README.md
-├── docs/               # your PDF / TXT / MD files
-└── chroma_db/          # vector store (created by task2.py on first run)
-```
-
-> `app.py` must be in the **same folder** as `task2.py`, because it imports `get_vectorstore` from it.
-
-## Prerequisites
-
-- Python 3.10 or newer
-- An API key for at least one provider (an [OpenRouter](https://openrouter.ai) key works with the free model)
-- Your documents placed in the `docs/` folder
-
 ## Installation
 
 ```bash
