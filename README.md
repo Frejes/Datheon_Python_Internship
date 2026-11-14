@@ -290,16 +290,6 @@ You > What is 15% of 2480, and what is the square root of that number?
 [FINAL ANSWER]
 15% of 2480 is 372, and its square root is about 19.2873.
 ```
-
-Some models skip the "Thought" sentence. If yours does, the THOUGHT line may be missing or show a generic placeholder.
-
-## Security notes
-
-- The calculator parses expressions into a syntax tree and only allows numbers, basic operators and a short list of math functions.
-- The file reader refuses any path outside `workspace/`.
-- Web search results are untrusted text. A page could contain instructions aimed at the model, so don't give this agent tools that can change or delete things without adding checks.
-- Never commit API keys to Git. Use environment variables.
-
 # Task-4
 
 # Interactive Full-Stack AI Chatbot with Streamlit
@@ -357,17 +347,11 @@ export OPENROUTER_API_KEY=your_key_here
 
 Other supported variables: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`.
 
-Never commit API keys to Git.
-
 ## Running the App
 
 ```bash
 streamlit run app.py
 ```
-
-The app opens at **http://localhost:8501**.
-
-The first run with retrieval enabled loads the embedding model and the vector store, which takes a few seconds. If `chroma_db/` does not exist yet, it is built from the files in `docs/`.
 
 ## Usage
 
@@ -376,17 +360,6 @@ The first run with retrieval enabled loads the embedding model and the vector st
 3. Type a question in the chat box.
 4. Open the **Sources** dropdown under an answer to see the file and page numbers used.
 5. Use **Clear conversation** to reset the memory.
-
-**Sidebar settings**
-
-| Setting | What it does |
-|---------|--------------|
-| Provider / Model | Which LLM answers. The default is `recursive/flint-v1.0:free` on OpenRouter. |
-| Temperature | Randomness of the answers. Lower is more factual. |
-| Memory | How many past turns are sent to the model. |
-| Use retrieval (RAG) | Answer from your documents instead of general knowledge. |
-| Documents folder | Where the source files live (used if the vector store must be built). |
-| Chunks retrieved (k) | How many document chunks are given to the model per question. |
 
 ## How It Works
 
@@ -399,14 +372,3 @@ User message
    -> LLM streams the reply -> shown live with st.write_stream
    -> reply and its sources saved to st.session_state
 ```
-
-## Troubleshooting
-
-| Problem | Likely cause and fix |
-|---------|---------------------|
-| `401 authentication_error` / invalid key | Wrong key for the selected provider (for example an OpenRouter key in the Anthropic box). Match the key to the provider and remove extra spaces. |
-| `ModuleNotFoundError: task2` | `app.py` is not in the same folder as `task2.py`. |
-| Chroma or embeddings errors | Run `pip install -r requirements.txt`. Delete `chroma_db/` and re-index if the embedding model was changed. |
-| Free model errors or rate limits | OpenRouter free models can be busy or unavailable. Retry later or change the model name in the sidebar. |
-| "I couldn't find that in the provided documents." | The answer is not in the indexed files, or `k` is too low. Increase **Chunks retrieved (k)**. |
-| Anthropic key rejected | Anthropic API keys need credit from console.anthropic.com. A Claude.ai subscription does not include API access. |
