@@ -420,18 +420,6 @@ User message
    -> reply and its sources saved to st.session_state
 ```
 
-**Why session state?** Streamlit re-runs the whole script on every interaction, so ordinary variables are reset. `st.session_state.messages` persists across reruns, and the script redraws the chat from it each time.
-
-**Grounding behaviour.** With retrieval on, the model is told to answer only from the supplied context and to reply "I couldn't find that in the provided documents." when the answer is missing.
-
-## Suggested Test Conversation
-
-1. Ask a question about your document. Expect a streamed answer plus sources.
-2. Ask a follow-up such as "explain that in simpler words". Expect it to use the earlier context.
-3. Ask something unrelated to the document. Expect the "couldn't find" reply.
-4. Turn retrieval off and ask the same unrelated question. Expect a normal general answer.
-5. Click **Clear conversation** and ask "what did I ask earlier?" to confirm the memory is reset.
-
 ## Troubleshooting
 
 | Problem | Likely cause and fix |
