@@ -314,7 +314,7 @@ A web-based chat application that wraps a RAG (Retrieval-Augmented Generation) p
 - **RAG over your documents:** reuses the Task 2 pipeline (ChromaDB + `all-MiniLM-L6-v2` embeddings) to answer from your PDFs/text files.
 - **Source citations:** each RAG answer shows the file and page numbers it came from.
 - **Strict grounding:** if the answer is not in the documents, the bot says so instead of guessing.
-- **Switchable LLM provider:** OpenRouter (default, free model available), Anthropic, or OpenAI.
+- **Switchable LLM provider:** OpenRouter, Anthropic, or OpenAI.
 - **Sidebar controls:** model, temperature, memory length, retrieval on/off, number of chunks (k), clear chat.
 
 ## Tech Stack
