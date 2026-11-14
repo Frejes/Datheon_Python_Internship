@@ -301,3 +301,150 @@ Some models skip the "Thought" sentence. If yours does, the THOUGHT line may be 
 - Never commit API keys to Git. Use environment variables.
 
 # Task-4
+
+# Interactive Full-Stack AI Chatbot with Streamlit
+
+A web-based chat application that wraps a RAG (Retrieval-Augmented Generation) pipeline in a responsive Streamlit UI. It streams answers token by token, remembers the conversation, and cites the document pages it used.
+
+## Features
+
+- **Streaming responses:** answers appear word by word as the model generates them.
+- **Conversation memory:** the last N turns (adjustable) are sent to the model, so follow-up questions work.
+- **Session state management:** chat history is stored in `st.session_state` and survives Streamlit reruns.
+- **RAG over your documents:** reuses the Task 2 pipeline (ChromaDB + `all-MiniLM-L6-v2` embeddings) to answer from your PDFs/text files.
+- **Source citations:** each RAG answer shows the file and page numbers it came from.
+- **Strict grounding:** if the answer is not in the documents, the bot says so instead of guessing.
+- **Switchable LLM provider:** OpenRouter (default, free model available), Anthropic, or OpenAI.
+- **Sidebar controls:** model, temperature, memory length, retrieval on/off, number of chunks (k), clear chat.
+
+## Tech Stack
+
+| Component | Tool |
+|-----------|------|
+| UI | Streamlit (`st.chat_message`, `st.chat_input`, `st.write_stream`) |
+| Orchestration | LangChain (prompt templates, streaming chains) |
+| Vector store | ChromaDB |
+| Embeddings | HuggingFace `sentence-transformers/all-MiniLM-L6-v2` |
+| LLM | OpenRouter / Anthropic / OpenAI |
+| Language | Python 3 |
+
+## Project Structure
+
+```
+task2/
+├── app.py              # Streamlit chatbot (this task)
+├── task2.py            # RAG pipeline from Task 2 (imported by app.py)
+├── requirements.txt
+├── README.md
+├── docs/               # your PDF / TXT / MD files
+└── chroma_db/          # vector store (created by task2.py on first run)
+```
+
+> `app.py` must be in the **same folder** as `task2.py`, because it imports `get_vectorstore` from it.
+
+## Prerequisites
+
+- Python 3.10 or newer
+- An API key for at least one provider (an [OpenRouter](https://openrouter.ai) key works with the free model)
+- Your documents placed in the `docs/` folder
+
+## Installation
+
+```bash
+# 1. (Optional) create a virtual environment
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS / Linux
+
+# 2. Install dependencies
+pip install -r requirements.txt
+```
+
+## Configuration
+
+Set your API key either in the app sidebar or as an environment variable:
+
+```bash
+# Windows (Command Prompt)
+set OPENROUTER_API_KEY=your_key_here
+
+# Windows (PowerShell)
+$env:OPENROUTER_API_KEY="your_key_here"
+
+# macOS / Linux
+export OPENROUTER_API_KEY=your_key_here
+```
+
+Other supported variables: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`.
+
+Never commit API keys to Git.
+
+## Running the App
+
+```bash
+streamlit run app.py
+```
+
+The app opens at **http://localhost:8501**.
+
+The first run with retrieval enabled loads the embedding model and the vector store, which takes a few seconds. If `chroma_db/` does not exist yet, it is built from the files in `docs/`.
+
+## Usage
+
+1. Choose a provider and paste your API key in the sidebar.
+2. Keep **Use retrieval (RAG)** on to answer from your documents, or turn it off for a general chatbot.
+3. Type a question in the chat box.
+4. Open the **Sources** dropdown under an answer to see the file and page numbers used.
+5. Use **Clear conversation** to reset the memory.
+
+**Sidebar settings**
+
+| Setting | What it does |
+|---------|--------------|
+| Provider / Model | Which LLM answers. The default is `recursive/flint-v1.0:free` on OpenRouter. |
+| Temperature | Randomness of the answers. Lower is more factual. |
+| Memory | How many past turns are sent to the model. |
+| Use retrieval (RAG) | Answer from your documents instead of general knowledge. |
+| Documents folder | Where the source files live (used if the vector store must be built). |
+| Chunks retrieved (k) | How many document chunks are given to the model per question. |
+
+## How It Works
+
+```
+User message
+   -> saved in st.session_state
+   -> (RAG on) search ChromaDB for the top-k chunks
+        query = previous question + current question (so follow-ups still retrieve well)
+   -> prompt = system instructions + retrieved context + recent history + question
+   -> LLM streams the reply -> shown live with st.write_stream
+   -> reply and its sources saved to st.session_state
+```
+
+**Why session state?** Streamlit re-runs the whole script on every interaction, so ordinary variables are reset. `st.session_state.messages` persists across reruns, and the script redraws the chat from it each time.
+
+**Grounding behaviour.** With retrieval on, the model is told to answer only from the supplied context and to reply "I couldn't find that in the provided documents." when the answer is missing.
+
+## Suggested Test Conversation
+
+1. Ask a question about your document. Expect a streamed answer plus sources.
+2. Ask a follow-up such as "explain that in simpler words". Expect it to use the earlier context.
+3. Ask something unrelated to the document. Expect the "couldn't find" reply.
+4. Turn retrieval off and ask the same unrelated question. Expect a normal general answer.
+5. Click **Clear conversation** and ask "what did I ask earlier?" to confirm the memory is reset.
+
+## Troubleshooting
+
+| Problem | Likely cause and fix |
+|---------|---------------------|
+| `401 authentication_error` / invalid key | Wrong key for the selected provider (for example an OpenRouter key in the Anthropic box). Match the key to the provider and remove extra spaces. |
+| `ModuleNotFoundError: task2` | `app.py` is not in the same folder as `task2.py`. |
+| Chroma or embeddings errors | Run `pip install -r requirements.txt`. Delete `chroma_db/` and re-index if the embedding model was changed. |
+| Free model errors or rate limits | OpenRouter free models can be busy or unavailable. Retry later or change the model name in the sidebar. |
+| "I couldn't find that in the provided documents." | The answer is not in the indexed files, or `k` is too low. Increase **Chunks retrieved (k)**. |
+| Anthropic key rejected | Anthropic API keys need credit from console.anthropic.com. A Claude.ai subscription does not include API access. |
+
+## Limitations
+
+- Retrieval quality depends on chunking and the embedding model from Task 2.
+- Free hosted models may be slower or less reliable than paid ones.
+- Chat history lives only in the browser session. Refreshing the page clears it.
