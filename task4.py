@@ -1,12 +1,4 @@
-"""Task 4: Interactive full-stack AI chatbot with Streamlit + LangChain.
 
-Features: streaming token output, chat history, session-state memory,
-swappable LLM provider, and a retrieval hook to plug in your RAG pipeline.
-
-Run:  streamlit run task4.py
-Set the selected provider's API key in the environment or
-.streamlit/secrets.toml (see .streamlit/secrets.toml.example).
-"""
 import html
 import os
 
