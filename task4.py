@@ -4,6 +4,8 @@ Features: streaming token output, chat history, session-state memory,
 swappable LLM provider, and a retrieval hook to plug in your RAG pipeline.
 
 Run:  streamlit run task4.py
+Set the selected provider's API key in the environment or
+.streamlit/secrets.toml (see .streamlit/secrets.toml.example).
 """
 import html
 import os
@@ -66,6 +68,15 @@ def build_llm(provider: str, model: str, temperature: float, api_key: str):
     return ChatOpenAI(
         model=model, temperature=temperature, api_key=api_key, streaming=True
     )
+
+
+def load_api_key(env_var: str) -> str:
+    api_key = os.getenv(env_var, "").strip()
+    if api_key:
+        return api_key
+    if st.secrets.load_if_toml_exists():
+        return str(st.secrets.get(env_var, "")).strip()
+    return ""
 
 
 def build_chain(llm):
@@ -362,12 +373,13 @@ with st.sidebar:
     default_model, env_var = defaults[provider]
     # key= makes the widgets reset cleanly when the provider changes
     model = st.text_input("Model", value=default_model, key=f"model_{provider}")
-    api_key = st.text_input(
-        env_var,
-        type="password",
-        value=os.getenv(env_var, ""),
-        key=f"key_{provider}",
-    ).strip()
+    api_key = load_api_key(env_var)
+    key_status = (
+        "API key is configured."
+        if api_key
+        else "Configure an API key in the environment or Streamlit secrets."
+    )
+    st.caption(key_status)
     temperature = st.slider("Temperature", 0.0, 1.0, 0.3, 0.1)
     max_turns = st.slider("Memory (past turns sent to model)", 1, 20, 8)
     use_rag = st.toggle("Use retrieval (RAG)", value=False)
@@ -420,7 +432,10 @@ if not st.session_state.messages:
 
 if prompt := st.chat_input("Ask me anything..."):
     if not api_key:
-        st.error(f"Please enter your {env_var} in the sidebar.")
+        st.error(
+            f"Configure {env_var} as an environment variable or in "
+            ".streamlit/secrets.toml."
+        )
         st.stop()
 
     history = to_lc_history(st.session_state.messages, max_turns)
